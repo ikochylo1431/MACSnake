@@ -10,7 +10,7 @@ import SpriteKit
 
 class GameScene: SKScene {
     fileprivate var snakeCurrentDirection: direction = .right
-    fileprivate var snake: [SKSpriteNode] = [.snakeBodyPart]
+    fileprivate var snake: [SKSpriteNode] = [.snakeBodyPart, .snakeBodyPart, .snakeBodyPart]
     fileprivate var snakePosition: [CGPoint] = [.zero]
     fileprivate var oldUpdateTime: TimeInterval = 0
     
@@ -25,12 +25,15 @@ class GameScene: SKScene {
             if i < snake.count {
                 let bodyPart = snake[i]
                 bodyPart.position = snakePosition[i]
-            } else { break }
+            } else { snakePosition.removeLast() }
         }
+        
+    
         
     }
     override func didMove(to view: SKView) {
-        //
+        let border = SKPhysicsBody(edgeLoopFrom: frame.self)
+        self.physicsBody = border
     }
     
 }
@@ -54,6 +57,9 @@ extension SKSpriteNode {
 extension GameScene {
     func prepareScene() {
         self.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        let snakeBodyPartContainer = SKNode()
+        snakeBodyPartContainer.name = "snakeBodyPartContainer"
+        addChild(snakeBodyPartContainer)
         for bodyPart in snake {
             addChild(bodyPart)
         }
@@ -80,16 +86,6 @@ extension GameScene {
     }
 }
 
-extension GameScene {
-    override func update(_ currentTime: TimeInterval) {
-        let delta: TimeInterval = 0.5
-        if currentTime - oldUpdateTime > delta {
-            oldUpdateTime = currentTime
-            movement()
-            updatePositionOfSnake()
-        }
-    }
-}
 extension CGPoint {
     static var normalizedMiddle: CGPoint { return CGPoint(x: 0.5, y: 0.5)}
     
@@ -132,6 +128,68 @@ extension GameScene {
     }
 }
 
+extension GameScene {
+    override func update(_ currentTime: TimeInterval) {
+        let delta: TimeInterval = 0.5
+        if currentTime - oldUpdateTime > delta {
+            oldUpdateTime = currentTime
+            movement()
+            killSnakeIfNeed()
+            updatePositionOfSnake()
+        }
+    }
+}
+
+
+extension GameScene {
+   fileprivate func killSnakeIfNeed() {
+    if snakeReachesScreenBounds || isSnakeRunOverSelf {
+        removeSnakeFromTheScreen()
+    }
+    }
+    
+    fileprivate func removeSnakeFromTheScreen() {
+        guard let snakeBody = childNode(withName: "snakeBodyPartContainer") else { return }
+        snakeBody.removeFromParent()
+        snake.removeAll()
+    }
+    
+    fileprivate var isSnakeRunOverSelf: Bool {
+        for position in snakePosition {
+            let filterPosition = snakePosition.filter({(examinedPoint) -> Bool in
+                return examinedPoint.x == position.x && examinedPoint.y == position.y
+            })
+            if filterPosition.count > 1 {
+                return true
+            }
+        }
+        return false
+    }
+    
+   
+
+    fileprivate var snakeReachesScreenBounds: Bool {
+        guard let positionOfTheHead = snakePosition.first else { return true }
+        
+        let leftBounds = -size.width / 2
+        if positionOfTheHead.x <= leftBounds {
+            return true
+        }
+        let rightBounds = +size.width / 2
+        if positionOfTheHead.x >= rightBounds {
+            return true
+        }
+        let upperBounds = +size.height / 2
+        if positionOfTheHead.y >= upperBounds {
+            return true
+        }
+        let lowerBounds = -size.width / 2
+        if positionOfTheHead.y <= lowerBounds {
+            return true
+        }
+        return false
+    }
+}
 
 
 
