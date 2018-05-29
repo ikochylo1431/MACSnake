@@ -10,16 +10,17 @@ import SpriteKit
 
 class ViewController: NSViewController {
 
+    @IBOutlet var skView: SKView!
+    
         override func viewDidLoad() {
             super.viewDidLoad()
-            if let scene = GameScene(fileNamed: "GameScene") {
-                let skView = self.view as! SKView
-                skView.showsFPS = true
-                skView.showsNodeCount = true
-                skView.ignoresSiblingOrder = true
-                scene.scaleMode = .aspectFill
-                skView.presentScene(scene)
-                
+            if let view = self.skView {
+                let scene = GameScene(size: CGSize(width: 1500, height: 1500))
+                scene.scaleMode = .aspectFit
+               view.presentScene(scene)
+                view.ignoresSiblingOrder = true
+                view.showsFPS = true
+                view.showsNodeCount = true
             }
             
         }
