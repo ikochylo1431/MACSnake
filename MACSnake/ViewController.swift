@@ -15,7 +15,7 @@ class ViewController: NSViewController {
         override func viewDidLoad() {
             super.viewDidLoad()
             if let view = self.skView {
-                let scene = GameScene(size: CGSize(width: 1500, height: 1500))
+                let scene = GameScene(size: CGSize(width: 1600, height: 1600))
                 scene.scaleMode = .aspectFit
                view.presentScene(scene)
                 view.ignoresSiblingOrder = true

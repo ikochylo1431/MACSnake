@@ -45,16 +45,20 @@ enum direction: UInt16 {
     case left = 0x7B
     case up = 0x7E
     case down = 0x7D
+    case right2 = 0x02
+    case left2 = 0x00
+    case up2 = 0x0D
+    case down2 = 0x01
 }
 
 extension SKSpriteNode {
     static var snakeBodyPart: SKSpriteNode {
-        let bodyPart = SKSpriteNode(color: .yellow, size: CGSize(width: 50, height: 50))
+        let bodyPart = SKSpriteNode(color: .yellow, size: CGSize(width: 40, height: 40))
         return bodyPart
     }
     
     static var snakeNewBodyPart: SKSpriteNode {
-        let bodyPart = SKSpriteNode(color: .green, size: CGSize(width: 50, height: 50))
+        let bodyPart = SKSpriteNode(color: .green, size: CGSize(width: 40, height: 40))
         return bodyPart
     }
     
@@ -62,7 +66,7 @@ extension SKSpriteNode {
 
 extension CGSize {
     static var snakeSize: CGSize {
-        return CGSize(width: 50, height: 50)
+        return CGSize(width: 40, height: 40)
     }
 }
 
@@ -97,6 +101,18 @@ extension GameScene {
         case .down:
             guard let headPosition = snakePosition.first else { return }
             snakePosition.insert(headPosition.pointToDown, at: 0)
+        case .right2:
+            guard let headPosition = snakePosition.first else { return }
+            snakePosition.insert(headPosition.pointToRight, at: 0)
+        case .left2:
+            guard let headPosition = snakePosition.first else { return }
+            snakePosition.insert(headPosition.pointToLeft, at: 0)
+        case .up2:
+            guard let headPosition = snakePosition.first else { return }
+            snakePosition.insert(headPosition.pointToUp, at: 0)
+        case .down2:
+            guard let headPosition = snakePosition.first else { return }
+            snakePosition.insert(headPosition.pointToDown, at: 0)
         }
     }
 }
@@ -109,19 +125,19 @@ extension CGPoint {
     }
     
     var pointToLeft: CGPoint{
-        return self.offSetBy(CGPoint(x: -CGSize(width: 50, height: 50).width, y: 0))
+        return self.offSetBy(CGPoint(x: -CGSize(width: 40, height: 40).width, y: 0))
     }
     
     var pointToRight: CGPoint{
-        return self.offSetBy(CGPoint(x: CGSize(width: 50, height: 50).width, y: 0))
+        return self.offSetBy(CGPoint(x: CGSize(width: 40, height: 40).width, y: 0))
     }
     
     var pointToUp: CGPoint{
-        return self.offSetBy(CGPoint(x: 0, y: CGSize(width: 50, height: 50).height))
+        return self.offSetBy(CGPoint(x: 0, y: CGSize(width: 40, height: 40).height))
     }
     
     var pointToDown: CGPoint{
-        return self.offSetBy(CGPoint(x: 0, y: -CGSize(width: 50, height: 50).height))
+        return self.offSetBy(CGPoint(x: 0, y: -CGSize(width: 40, height: 40).height))
     }
     
 }
@@ -137,6 +153,14 @@ extension GameScene {
             snakeCurrentDirection = .right
         case direction.left.rawValue:
             snakeCurrentDirection = .left
+        case direction.down2.rawValue:
+            snakeCurrentDirection = .down2
+        case direction.up2.rawValue:
+            snakeCurrentDirection = .up2
+        case direction.right2.rawValue:
+            snakeCurrentDirection = .right2
+        case direction.left2.rawValue:
+            snakeCurrentDirection = .left2
 
         default: break
         }
